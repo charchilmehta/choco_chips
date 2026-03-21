@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getPatientRecords, createRecord, addPrescription } from '../../services/medicalService';
+import { getPatientRecords, createRecord } from '../../services/medicalService';
 
 const DEMO_RECORDS = [
   {
