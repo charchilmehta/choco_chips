@@ -69,10 +69,12 @@ const getPatientRecords = async (req, res) => {
 
     const filter = { patient: targetPatientId };
 
-    // Doctors can only see records they created
+    // Doctors can only see records they created for this patient
     if (req.user.role === 'doctor') {
       filter.doctor = req.user.id;
     }
+
+    // Admin can view any patient's records without restriction
 
     const records = await MedicalRecord.find(filter)
       .populate('doctor', 'name email')
