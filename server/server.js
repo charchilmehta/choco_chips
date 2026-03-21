@@ -9,6 +9,7 @@ const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Import all route files
@@ -42,6 +43,32 @@ app.use(
 
 // Parse incoming JSON request bodies
 app.use(express.json());
+
+// ─────────────────────────────────────────────────────────────
+// Rate Limiting
+// Protects against brute-force attacks, DDoS, and API abuse
+// ─────────────────────────────────────────────────────────────
+
+/** General rate limit: 100 requests per 15 minutes per IP */
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests. Please try again later.' },
+});
+
+/** Stricter limit for auth endpoints to prevent brute-force */
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many authentication attempts. Please wait 15 minutes.' },
+});
+
+// Apply general limiter to all API routes
+app.use('/api/', generalLimiter);
 
 // ─────────────────────────────────────────────────────────────
 // Database Connection
@@ -78,7 +105,7 @@ app.get('/api/health-check', (req, res) => {
 });
 
 // Mount all route modules at their respective base paths
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/hospitals', hospitalRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/appointments', appointmentRoutes);

@@ -55,22 +55,23 @@ const createRecord = async (req, res) => {
 
 /**
  * @route   GET /api/medical/patient/:patientId
- * @desc    Get all medical records for a specific patient
- *          Patients can only see their own records; doctors see their patients' records
+ * @desc    Get all medical records for a specific patient.
+ *          Patients can only retrieve their own records (enforced server-side).
+ *          Doctors can only retrieve records they personally created.
  * @access  Private
  */
 const getPatientRecords = async (req, res) => {
   try {
-    const filter = { patient: req.params.patientId };
+    // For patients, always use their own ID from the auth token (never the URL param)
+    // This prevents horizontal privilege escalation (accessing another patient's records)
+    const targetPatientId =
+      req.user.role === 'patient' ? req.user.id : req.params.patientId;
+
+    const filter = { patient: targetPatientId };
 
     // Doctors can only see records they created
     if (req.user.role === 'doctor') {
       filter.doctor = req.user.id;
-    }
-
-    // Patients can only see their own records
-    if (req.user.role === 'patient' && req.params.patientId !== req.user.id) {
-      return res.status(403).json({ success: false, message: 'Access denied.' });
     }
 
     const records = await MedicalRecord.find(filter)
