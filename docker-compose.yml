@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  industrial-knowledge-intelligence:
+    build: .
+    container_name: industrial-knowledge-intelligence
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
