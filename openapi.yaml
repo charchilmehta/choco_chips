@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: Industrial Knowledge Intelligence Platform API
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Service status
+  /upload:
+    post:
+      summary: Upload and process a document
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Document processed
+        "400":
+          description: Validation error
+  /query:
+    post:
+      summary: Query the industrial knowledge copilot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+      responses:
+        "200":
+          description: Query result with sources
+        "400":
+          description: Missing/invalid request
+  /knowledge-graph:
+    get:
+      summary: Get full knowledge graph
+      responses:
+        "200":
+          description: Graph nodes and edges
+  /equipment/{equipment_id}:
+    get:
+      summary: Get equipment history and procedures
+      parameters:
+        - in: path
+          name: equipment_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Equipment details
+  /documents:
+    get:
+      summary: List processed documents
+      responses:
+        "200":
+          description: Document listing
+  /similar:
+    post:
+      summary: Find similar documents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                k:
+                  type: integer
+      responses:
+        "200":
+          description: Similar document results
+  /stats:
+    get:
+      summary: Get platform statistics
+      responses:
+        "200":
+          description: Stats payload
