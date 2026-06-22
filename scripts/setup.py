@@ -45,6 +45,7 @@ REQUIRED_PATHS = [
 
 PACKAGE_IMPORT_MAP = {
     "python-dotenv": "dotenv",
+    "PyPDF2": "PyPDF2",
     "pypdf2": "PyPDF2",
     "python-multipart": "multipart",
     "scikit-learn": "sklearn",
@@ -167,6 +168,9 @@ def run_connectivity_check() -> bool:
     print_step("7) Testing basic connectivity")
     try:
         with urlopen(HEALTH_URL, timeout=2) as response:
+            if response.status != 200:
+                print(f"✗ API health endpoint returned status {response.status}.")
+                return False
             payload = response.read().decode("utf-8")
             print(f"✓ API reachable: {payload[:200]}")
             return True

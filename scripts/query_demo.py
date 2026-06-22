@@ -76,7 +76,8 @@ def main() -> int:
             response = post_json(QUERY_URL, {"question": query})
             query_results.append({"query": query, "response": response})
             print(f"\nQ: {query}")
-            print(f"A: {response.get('answer', 'No answer returned')[:180]}")
+            answer_snippet = (response.get("answer") or "No answer returned")[:180]
+            print(f"A: {answer_snippet}")
 
         REPORTS_DIR.mkdir(parents=True, exist_ok=True)
         report_path = REPORTS_DIR / "demo_report.json"
@@ -100,6 +101,18 @@ def main() -> int:
             except subprocess.TimeoutExpired:
                 server_process.kill()
                 print("⚠ Forced API server shutdown after timeout.")
+        try:
+            stdout_output, stderr_output = server_process.communicate(timeout=2)
+        except subprocess.TimeoutExpired:
+            server_process.kill()
+            stdout_output, stderr_output = server_process.communicate()
+        if server_process.returncode not in (None, 0):
+            print("⚠ API server exited with non-zero status.")
+            if stderr_output:
+                print("Server stderr (tail):")
+                print(stderr_output[-500:])
+        elif stdout_output:
+            print("Server log captured.")
         print("✓ API server stopped.")
 
 
