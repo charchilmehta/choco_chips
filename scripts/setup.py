@@ -138,7 +138,12 @@ def initialize_directories_and_graph() -> bool:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     if not GRAPH_FILE.exists():
-        GRAPH_FILE.write_text(json.dumps({"nodes": [], "edges": [], "stats": {"total_nodes": 0, "total_edges": 0}}, indent=2), encoding="utf-8")
+        empty_graph = {
+            "nodes": [],
+            "edges": [],
+            "stats": {"total_nodes": 0, "total_edges": 0},
+        }
+        GRAPH_FILE.write_text(json.dumps(empty_graph, indent=2), encoding="utf-8")
     print(f"✓ Documents directory: {DOCUMENTS_DIR}")
     print(f"✓ Embeddings directory: {EMBEDDINGS_DIR}")
     print(f"✓ Reports directory: {REPORTS_DIR}")

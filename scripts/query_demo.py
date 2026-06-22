@@ -91,7 +91,11 @@ def main() -> int:
                 server_process.terminate()
             else:
                 os.kill(server_process.pid, signal.SIGTERM)
-            server_process.wait(timeout=10)
+            try:
+                server_process.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                server_process.kill()
+                print("⚠ Forced API server shutdown after timeout.")
         print("✓ API server stopped.")
 
 
