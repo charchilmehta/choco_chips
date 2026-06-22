@@ -13,6 +13,10 @@ from urllib.request import Request, urlopen
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = REPO_ROOT / "data" / "reports"
+API_BASE_URL = f"http://127.0.0.1:{os.getenv('PORT', '5000')}"
+HEALTH_URL = f"{API_BASE_URL}/health"
+STATS_URL = f"{API_BASE_URL}/stats"
+QUERY_URL = f"{API_BASE_URL}/query"
 
 SAMPLE_QUERIES = [
     "What is the maintenance history of Pump-A23?",
@@ -58,18 +62,18 @@ def main() -> int:
     print(f"✓ Started API server (PID: {server_process.pid})")
 
     try:
-        if not wait_for_server("http://127.0.0.1:5000/health"):
+        if not wait_for_server(HEALTH_URL):
             print("✗ API server did not become healthy within timeout.")
             return 1
 
-        health = get_json("http://127.0.0.1:5000/health")
-        stats = get_json("http://127.0.0.1:5000/stats")
+        health = get_json(HEALTH_URL)
+        stats = get_json(STATS_URL)
         print(f"✓ Health: {health.get('status')}")
         print(f"✓ Documents processed: {stats.get('documents_processed', 0)}")
 
         query_results = []
         for query in SAMPLE_QUERIES:
-            response = post_json("http://127.0.0.1:5000/query", {"question": query})
+            response = post_json(QUERY_URL, {"question": query})
             query_results.append({"query": query, "response": response})
             print(f"\nQ: {query}")
             print(f"A: {response.get('answer', 'No answer returned')[:180]}")
