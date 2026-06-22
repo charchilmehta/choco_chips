@@ -9,7 +9,7 @@ Production-ready and demo-ready MVP for industrial document intelligence with:
 ## Quick Start (Judge Friendly)
 
 ```bash
-cd /home/runner/work/choco_chips/choco_chips
+cd <project-root>
 pip install -r requirements.txt
 python scripts/setup.py
 python scripts/ingest_documents.py
@@ -114,7 +114,7 @@ Returns high-level platform statistics.
 
 ## Sample Query Examples
 
-1. `What is the maintenance history of Pump-A23?`
+1. `What is the maintenance history of PUMP-A23?`
 2. `Show me operating procedures for HX-01`
 3. `What compliance gaps exist for COM-03?`
 4. `Which equipment has urgent maintenance findings?`

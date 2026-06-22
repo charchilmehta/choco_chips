@@ -16,7 +16,7 @@ curl http://localhost:5000/knowledge-graph
 curl http://localhost:5000/equipment/PUMP-A23
 curl -X POST http://localhost:5000/query \
   -H "Content-Type: application/json" \
-  -d '{"question":"What is the maintenance history of Pump-A23?"}'
+  -d '{"question":"What is the maintenance history of PUMP-A23?"}'
 ```
 
 ## Expected Outputs (High-Level)

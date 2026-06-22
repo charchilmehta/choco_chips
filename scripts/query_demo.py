@@ -3,7 +3,6 @@
 
 import json
 import os
-import signal
 import subprocess
 import sys
 import time
@@ -13,7 +12,20 @@ from urllib.request import Request, urlopen
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPORTS_DIR = REPO_ROOT / "data" / "reports"
-API_BASE_URL = f"http://127.0.0.1:{os.getenv('PORT', '5000')}"
+
+
+def resolve_port() -> str:
+    env_path = REPO_ROOT / ".env"
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("PORT="):
+                value = line.split("=", 1)[1].strip()
+                if value:
+                    return value
+    return os.getenv("PORT", "5000")
+
+
+API_BASE_URL = f"http://127.0.0.1:{resolve_port()}"
 HEALTH_URL = f"{API_BASE_URL}/health"
 STATS_URL = f"{API_BASE_URL}/stats"
 QUERY_URL = f"{API_BASE_URL}/query"
@@ -92,10 +104,7 @@ def main() -> int:
         return 0
     finally:
         if server_process.poll() is None:
-            if os.name == "nt":
-                server_process.terminate()
-            else:
-                os.kill(server_process.pid, signal.SIGTERM)
+            server_process.terminate()
             try:
                 server_process.wait(timeout=10)
             except subprocess.TimeoutExpired:

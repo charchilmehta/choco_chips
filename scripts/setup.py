@@ -23,7 +23,7 @@ GRAPH_FILE = DATA_DIR / "knowledge_graph.json"
 ENV_FILE = REPO_ROOT / ".env"
 ENV_TEMPLATE = REPO_ROOT / ".env.example"
 REQUIREMENTS_FILE = REPO_ROOT / "requirements.txt"
-API_BASE_URL = f"http://127.0.0.1:{os.getenv('PORT', '5000')}"
+API_BASE_URL = "http://127.0.0.1:5000"
 HEALTH_URL = f"{API_BASE_URL}/health"
 
 REQUIRED_PATHS = [
